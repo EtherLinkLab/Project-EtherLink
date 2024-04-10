@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.7.6;
+pragma solidity ^0.8.22;
 
 
 library SafeMath {
@@ -40,9 +40,9 @@ library SafeMath {
 }
 
 /**
- * BEP20 standard interface.
+ * ERC20 standard interface.
  */
-interface IBEP20 {
+interface IERC20 {
     function totalSupply() external view returns (uint256);
     function decimals() external view returns (uint8);
     function symbol() external view returns (string memory);
@@ -169,8 +169,8 @@ contract DividendDistributor is IDividendDistributor {
         uint256 totalRealised;
     }
 
-    IBEP20 RWRD = IBEP20(0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56);
-    address WBNB = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
+    IERC20 RWRD = IERC20(0xB8258711507Deb527F8E46c09EC443F9E162D906);
+    address WBNB = 0x252fd9C54323240Cc1129beD11a1fE891fEb9be6;
     IDEXRouter router;
 
     address[] shareholders;
@@ -204,7 +204,7 @@ contract DividendDistributor is IDividendDistributor {
     constructor (address _router) {
         router = _router != address(0)
             ? IDEXRouter(_router)
-            : IDEXRouter(0x10ED43C718714eb63d5aA57B78B54704E256024E);
+            : IDEXRouter(0x3ff6c3BbDD88336837b36517B264679CC5a133a1);
         _token = msg.sender;
     }
 
@@ -324,19 +324,19 @@ contract DividendDistributor is IDividendDistributor {
     }
 }
 
-contract NewName is IBEP20, Auth {
+contract EtherStellar is IERC20, Auth {
     using SafeMath for uint256;
 
-    address WBNB = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
+    address WBNB = 0x252fd9C54323240Cc1129beD11a1fE891fEb9be6;
     address DEAD = 0x000000000000000000000000000000000000dEaD;
     address ZERO = 0x0000000000000000000000000000000000000000;
-    address DEV = 0x371870617Df3D6C8b389650dE35b37D6A1b6FA22;
+    address DEV = 0xB8258711507Deb527F8E46c09EC443F9E162D906;
 
-    string constant _name = "NewName";
-    string constant _symbol = "Symbol";
-    uint8 constant _decimals = 9;
+    string constant _name = "EtherStellar";
+    string constant _symbol = "STELLAR";
+    uint8 constant _decimals = 18;
 
-    uint256 _totalSupply = 1000 * 10**6 * 10**_decimals;
+    uint256 _totalSupply = 1000000 * 10**6 * 10**_decimals;
 
     uint256 public _maxTxAmount = _totalSupply;
     uint256 public _maxWalletToken = _totalSupply;
@@ -355,10 +355,10 @@ contract NewName is IBEP20, Auth {
 
     uint256 public liquidityFee    = 2;
     uint256 public reflectionFee   = 3;
-    uint256 public marketingFee    = 6;
+    uint256 public marketingFee    = 4;
     uint256 public devFee          = 1;
     uint256 public totalFee        = marketingFee + reflectionFee + liquidityFee + devFee;
-    uint256 public feeDenominator  = 100;
+    uint256 public feeDenominator  = 1000;
 
     uint256 public sellMultiplier  = 737;
 
@@ -366,8 +366,8 @@ contract NewName is IBEP20, Auth {
     address public marketingFeeReceiver;
     address public devFeeReceiver;
 
-    uint256 targetLiquidity = 20;
-    uint256 targetLiquidityDenominator = 100;
+    uint256 targetLiquidity = 2;
+    uint256 targetLiquidityDenominator = 1000;
 
     IDEXRouter public router;
     address public pair;
@@ -375,10 +375,10 @@ contract NewName is IBEP20, Auth {
     bool public tradingOpen = false;
 
     DividendDistributor public distributor;
-    uint256 distributorGas = 500000;
+    uint256 distributorGas = 50000;
 
-    bool public buyCooldownEnabled = true;
-    uint8 public cooldownTimerInterval = 10;
+    bool public buyCooldownEnabled = false;
+    uint8 public cooldownTimerInterval = 0;
     mapping (address => uint) private cooldownTimer;
 
     bool public swapEnabled = true;
