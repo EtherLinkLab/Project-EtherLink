@@ -37,8 +37,8 @@ Run `npm run compile` (or `yarn compile`) to compile the Solidity code into byte
 
 **Join the EtherStellar Community:**
 
-* Website[https://etherstellar.my.canva.site]
+* Website: https://etherstellar.my.canva.site
 
-* Telegram[https://t.me/ether_stellar]
+* Telegram: https://t.me/ether_stellar
 
-* Twitter[https://twitter.com/ether_stellar]
+* Twitter: https://twitter.com/ether_stellar
