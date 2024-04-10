@@ -7,6 +7,8 @@ This repository contains the source code for the EtherStellar token (STELLAR) bu
 **What's Included:**
 
 * `contracts/` - Directory containing the Solidity smart contract code for STELLAR.
+* `code_of_conduct/` - Our code of conduct outlining respectful and inclusive behavior for contributors.
+* `security/` - Information on security considerations and potential vulnerabilities associated with the smart contract.
 * `README.md` - This file (you're reading it now!)
 * `LICENSE` - File specifying the license under which the code is distributed.
 
@@ -22,7 +24,7 @@ Run `npm run compile` (or `yarn compile`) to compile the Solidity code into byte
 
 *
 
-## EtherStellar: Professional Statement
+## EtherStellar (STELLAR)
 
 **EtherStellar (STELLAR): A Gas-Fee-Free Future for Decentralized Transactions**
 
@@ -35,6 +37,8 @@ Run `npm run compile` (or `yarn compile`) to compile the Solidity code into byte
 
 **Join the EtherStellar Community:**
 
-* Website: [https://etherstellar.my.canva.site]
-* Telegram: [https://t.me/ether_stellar]
-* Twitter: [https://twitter.com/ether_stellar]
+* Website[https://etherstellar.my.canva.site]
+
+* Telegram[https://t.me/ether_stellar]
+
+* Twitter[https://twitter.com/ether_stellar]
