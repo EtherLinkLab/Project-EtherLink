@@ -622,8 +622,6 @@ library StorageSlot {
 
 pragma solidity ^0.8.20;
 
-import {Proxy} from "../Proxy.sol";
-import {ERC1967Utils} from "./ERC1967Utils.sol";
 
 /**
  * @dev This contract implements an upgradeable proxy. It is upgradeable because calls are delegated to an
@@ -657,6 +655,10 @@ contract ERC1967Proxy is Proxy {
         return ERC1967Utils.getImplementation();
     }
 }
+
+
+
+// File: @Breadcrumbsopenzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol
 
 
 
