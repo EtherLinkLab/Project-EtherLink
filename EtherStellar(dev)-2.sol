@@ -1,12 +1,36 @@
+// File: @openzeppelin/contracts/utils/Context.sol
+
+// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
+
+
+pragma solidity ^0.8.22;
+
 /**
- *Submitted for verification at BscScan.com on 2020-10-28
-*/
+ * @dev Provides information about the current execution context, including the
+ * sender of the transaction and its data. While these are generally available
+ * via msg.sender and msg.data, they should not be accessed in such a direct
+ * manner, since when dealing with meta-transactions the account sending and
+ * paying for execution may not be the actual sender (as far as an application
+ * is concerned).
+ *
+ * This contract is only required for intermediate, library-like contracts.
+ */
+abstract contract Context {
+    function _msgSender() internal view virtual returns (address) {
+        return msg.sender;
+    }
 
-// File: openzeppelin-solidity/contracts/proxy/Proxy.sol
+    function _msgData() internal view virtual returns (bytes calldata) {
+        return msg.data;
+    }
+}
 
 
 
-pragma solidity ^0.6.0;
+// File: @openzeppelin/contracts/proxy/Proxy.sol
+
+
+pragma solidity ^0.8.22;
 
 /**
  * @dev This abstract contract provides a fallback function that delegates all calls to another contract using the EVM
@@ -88,11 +112,11 @@ abstract contract Proxy {
     }
 }
 
-// File: openzeppelin-solidity/contracts/utils/Address.sol
+// File: @openzeppelin/contracts/utils/Address.sol
 
 
 
-pragma solidity ^0.6.2;
+pragma solidity ^0.8.22;
 
 /**
  * @dev Collection of functions related to the address type
@@ -232,11 +256,11 @@ library Address {
     }
 }
 
-// File: openzeppelin-solidity/contracts/proxy/UpgradeableProxy.sol
+// File: @openzeppelin/contracts/proxy/UpgradeableProxy.sol
 
 
 
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.22;
 
 
 
