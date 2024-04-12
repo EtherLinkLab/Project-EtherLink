@@ -1544,7 +1544,7 @@ abstract contract ERC20Burnable is Context, ERC20 {
 
 pragma solidity ^0.8.22;
 
-contract EtherStellar is ERC20, ERC20Burnable, Ownable {
+contract EtherStellar Coin is ERC20, ERC20Burnable, Ownable {
     uint256 private constant INITIAL_SUPPLY = 72000000000 * 10**18;
 
     constructor() ERC20("EtherStellar Coin", "STELLAR") {
