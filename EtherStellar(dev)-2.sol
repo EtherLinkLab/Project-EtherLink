@@ -1,4 +1,4 @@
-// File: @openzeppelin/contracts/utils/Context.sol
+// File: @openzeppelin-contracts/contracts/utils/Context.sol
 
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
@@ -26,8 +26,29 @@ abstract contract Context {
 }
 
 
+//File: @openzeppelin-contracts/contracts/proxy/beacon
+/IBeacon.sol
 
-// File: @openzeppelin/contracts/proxy/Proxy.sol
+// SPDX-License-Identifier: MIT
+// OpenZeppelin Contracts (last updated v5.0.0) (proxy/beacon/IBeacon.sol)
+
+pragma solidity ^0.8.22;
+
+/**
+ * @dev This is the interface that {BeaconProxy} expects of its beacon.
+ */
+interface IBeacon {
+    /**
+     * @dev Must return an address that can be used as a delegate call target.
+     *
+     * {UpgradeableBeacon} will check that this address is a contract.
+     */
+    function implementation() external view returns (address);
+}
+
+
+
+// File: @openzeppelin-contracts/contracts/proxy/Proxy.sol
 
 
 pragma solidity ^0.8.22;
@@ -112,8 +133,9 @@ abstract contract Proxy {
     }
 }
 
-// File: @openzeppelin/contracts/utils/Address.sol
 
+
+// File: @openzeppelin-contracts/contracts/utils/Address.sol
 
 
 pragma solidity ^0.8.22;
@@ -256,8 +278,9 @@ library Address {
     }
 }
 
-// File: @openzeppelin/contracts/proxy/UpgradeableProxy.sol
 
+
+// File: @openzeppelin-contracts/contracts/proxy/UpgradeableProxy.sol
 
 
 pragma solidity ^0.8.22;
@@ -338,11 +361,12 @@ contract UpgradeableProxy is Proxy {
     }
 }
 
-// File: openzeppelin-solidity/contracts/proxy/TransparentUpgradeableProxy.sol
 
 
+// File: @openzeppelin-solidity/contracts/proxy/TransparentUpgradeableProxy.sol
 
-pragma solidity ^0.6.0;
+
+pragma solidity ^0.8.22;
 
 
 /**
@@ -493,12 +517,12 @@ contract TransparentUpgradeableProxy is UpgradeableProxy {
     }
 }
 
-// File: contracts/BEP20UpgradeableProxy.sol
+// File: @contracts/ERC20UpgradeableProxy.sol
 
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.22;
 
 
-contract BEP20UpgradeableProxy is TransparentUpgradeableProxy {
+contract ERC20UpgradeableProxy is TransparentUpgradeableProxy {
 
     constructor(address logic, address admin, bytes memory data) TransparentUpgradeableProxy(logic, admin, data) public {
 
