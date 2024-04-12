@@ -1,4 +1,5 @@
 // File: @openzeppelin-contracts/contracts/utils/Context.sol
+// SPDX-License-Identifier: MIT
 
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
@@ -49,7 +50,7 @@ interface IBeacon {
 
 
 // File: @openzeppelin-contracts/contracts/proxy/Proxy.sol
-
+// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.22;
 
@@ -136,6 +137,7 @@ abstract contract Proxy {
 
 
 // File: @openzeppelin-contracts/contracts/utils/Address.sol
+// SPDX-License-Identifier: MIT
 
 
 pragma solidity ^0.8.22;
@@ -718,10 +720,9 @@ contract BeaconProxy is Proxy {
 
 
 // File: @openzeppelin-contracts/contracts/proxy/UpgradeableProxy.sol
-
+// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.22;
-
 
 
 /**
@@ -801,6 +802,7 @@ contract UpgradeableProxy is Proxy {
 
 
 // File: @openzeppelin-solidity/contracts/proxy/TransparentUpgradeableProxy.sol
+// SPDX-License-Identifier: MIT
 
 
 pragma solidity ^0.8.22;
@@ -954,7 +956,11 @@ contract TransparentUpgradeableProxy is UpgradeableProxy {
     }
 }
 
+
+
 // File: @contracts/ERC20UpgradeableProxy.sol
+// SPDX-License-Identifier: MIT
+
 
 pragma solidity ^0.8.22;
 
@@ -969,6 +975,7 @@ contract ERC20UpgradeableProxy is TransparentUpgradeableProxy {
 
 
 // File: @openzeppelin-contracts/contracts/access/Ownable.sol
+// SPDX-License-Identifier: MIT
 
 // OpenZeppelin Contracts (last updated v4.7.0) (access/Ownable.sol)
 
@@ -1054,8 +1061,12 @@ abstract contract Ownable is Context {
 }
 
 
+
 // File: @openzeppelin/contracts/token/ERC20/IERC20.sol
+// SPDX-License-Identifier: MIT
+
 // OpenZeppelin Contracts (last updated v4.6.0) (token/ERC20/IERC20.sol)
+
 
 pragma solidity ^0.8.22;
 
@@ -1140,12 +1151,12 @@ interface IERC20 {
 
 
 // File: @openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol
-
+// SPDX-License-Identifier: MIT
 
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)
 
-pragma solidity ^0.8.22;
 
+pragma solidity ^0.8.22;
 
 /**
  * @dev Interface for the optional metadata functions from the ERC20 standard.
@@ -1179,10 +1190,6 @@ interface IERC20Metadata is IERC20 {
 
 pragma solidity ^0.8.22;
 
-import {IERC20} from "./IERC20.sol";
-import {IERC20Metadata} from "./extensions/IERC20Metadata.sol";
-import {Context} from "../../utils/Context.sol";
-import {IERC20Errors} from "../../interfaces/draft-IERC6093.sol";
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -1484,5 +1491,70 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
                 _approve(owner, spender, currentAllowance - value, false);
             }
         }
+    }
+}
+
+
+
+// File: @openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Burnable.sol
+// SPDX-License-Identifier: MIT
+
+// OpenZeppelin Contracts (last updated v4.5.0) (token/ERC20/extensions/ERC20Burnable.sol)
+
+
+pragma solidity ^0.8.2;
+
+/**
+ * @dev Extension of {ERC20} that allows token holders to destroy both their own
+ * tokens and those that they have an allowance for, in a way that can be
+ * recognized off-chain (via event analysis).
+ */
+abstract contract ERC20Burnable is Context, ERC20 {
+    /**
+     * @dev Destroys `amount` tokens from the caller.
+     *
+     * See {ERC20-_burn}.
+     */
+    function burn(uint256 amount) public virtual {
+        _burn(_msgSender(), amount);
+    }
+
+    /**
+     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
+     * allowance.
+     *
+     * See {ERC20-_burn} and {ERC20-allowance}.
+     *
+     * Requirements:
+     *
+     * - the caller must have allowance for ``accounts``'s tokens of at least
+     * `amount`.
+     */
+    function burnFrom(address account, uint256 amount) public virtual {
+        _spendAllowance(account, _msgSender(), amount);
+        _burn(account, amount);
+    }
+}
+
+
+
+// File: contracts/EtherStellarCoin.sol
+// SPDX-License-Identifier: MIT
+
+
+pragma solidity ^0.8.22;
+
+contract EtherStellar is ERC20, ERC20Burnable, Ownable {
+    uint256 private constant INITIAL_SUPPLY = 72000000000 * 10**18;
+
+    constructor() ERC20("EtherStellar Coin", "STELLAR") {
+        _mint(msg.sender, INITIAL_SUPPLY);
+    }
+
+    function distributeTokens(address distributionWallet) external onlyOwner {
+        uint256 supply = balanceOf(msg.sender);
+        require(supply == INITIAL_SUPPLY, "Tokens already distributed");
+
+        _transfer(msg.sender, distributionWallet, supply);
     }
 }
