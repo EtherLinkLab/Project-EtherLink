@@ -1502,7 +1502,7 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
 // OpenZeppelin Contracts (last updated v4.5.0) (token/ERC20/extensions/ERC20Burnable.sol)
 
 
-pragma solidity ^0.8.2;
+pragma solidity ^0.8.22;
 
 /**
  * @dev Extension of {ERC20} that allows token holders to destroy both their own
@@ -1537,6 +1537,129 @@ abstract contract ERC20Burnable is Context, ERC20 {
 }
 
 
+// File: @openzeppelin/contracts/utils/Pausable.sol
+// SPDX-License-Identifier: MIT
+
+// OpenZeppelin Contracts (last updated v5.0.0) (utils/Pausable.sol)
+
+
+pragma solidity ^0.8.22;
+
+
+/**
+ * @dev Contract module which allows children to implement an emergency stop
+ * mechanism that can be triggered by an authorized account.
+ *
+ * This module is used through inheritance. It will make available the
+ * modifiers `whenNotPaused` and `whenPaused`, which can be applied to
+ * the functions of your contract. Note that they will not be pausable by
+ * simply including this module, only once the modifiers are put in place.
+ */
+abstract contract Pausable is Context {
+    bool private _paused;
+
+    /**
+     * @dev Emitted when the pause is triggered by `account`.
+     */
+    event Paused(address account);
+
+    /**
+     * @dev Emitted when the pause is lifted by `account`.
+     */
+    event Unpaused(address account);
+
+    /**
+     * @dev The operation failed because the contract is paused.
+     */
+    error EnforcedPause();
+
+    /**
+     * @dev The operation failed because the contract is not paused.
+     */
+    error ExpectedPause();
+
+    /**
+     * @dev Initializes the contract in unpaused state.
+     */
+    constructor() {
+        _paused = false;
+    }
+
+    /**
+     * @dev Modifier to make a function callable only when the contract is not paused.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    modifier whenNotPaused() {
+        _requireNotPaused();
+        _;
+    }
+
+    /**
+     * @dev Modifier to make a function callable only when the contract is paused.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    modifier whenPaused() {
+        _requirePaused();
+        _;
+    }
+
+    /**
+     * @dev Returns true if the contract is paused, and false otherwise.
+     */
+    function paused() public view virtual returns (bool) {
+        return _paused;
+    }
+
+    /**
+     * @dev Throws if the contract is paused.
+     */
+    function _requireNotPaused() internal view virtual {
+        if (paused()) {
+            revert EnforcedPause();
+        }
+    }
+
+    /**
+     * @dev Throws if the contract is not paused.
+     */
+    function _requirePaused() internal view virtual {
+        if (!paused()) {
+            revert ExpectedPause();
+        }
+    }
+
+    /**
+     * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    function _pause() internal virtual whenNotPaused {
+        _paused = true;
+        emit Paused(_msgSender());
+    }
+
+    /**
+     * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    function _unpause() internal virtual whenPaused {
+        _paused = false;
+        emit Unpaused(_msgSender());
+    }
+}
+
+
 
 // File: contracts/EtherStellarCoin.sol
 // SPDX-License-Identifier: MIT
@@ -1544,7 +1667,7 @@ abstract contract ERC20Burnable is Context, ERC20 {
 
 pragma solidity ^0.8.22;
 
-contract EtherStellar Coin is ERC20, ERC20Burnable, Ownable {
+contract EtherStellar Coin is ERC20, ERC20Burnable, Pausable, Ownable {
     uint256 private constant INITIAL_SUPPLY = 72000000000 * 10**18;
 
     constructor() ERC20("EtherStellar Coin", "STELLAR") {
@@ -1558,3 +1681,4 @@ contract EtherStellar Coin is ERC20, ERC20Burnable, Ownable {
         _transfer(msg.sender, distributionWallet, supply);
     }
 }
+
