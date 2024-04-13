@@ -2146,11 +2146,11 @@ abstract contract ReentrancyGuard {
 
 
 // File: contracts/EtherStellarCoin.sol
+
 // SPDX-License-Identifier: MIT
 
 
 pragma solidity ^0.8.22;
-
 
 library SafeMath {
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
@@ -2189,12 +2189,13 @@ contract EtherStellarCoin is ERC20, ERC20Burnable, Pausable, AccessControl, Owna
 
     uint256 private constant INITIAL_SUPPLY = 72000000000 * 10 ** 18;
 
+    // Internal variable for reentrancy guard
     bool private _locked;
 
     modifier nonReentrant() {
         // This is a security mechanism to prevent reentrancy attacks.
         // Calling _nonReentrantBefore protects the following function from reentrancy.
-        // When the function finishes, it calls _nonReentrantAfter to reset the reentrancy flag.
+        // When the function finishes, it calls _nonReentrantAfter to reset the flag.
         _nonReentrantBefore();
         _;
         _nonReentrantAfter();
@@ -2202,8 +2203,13 @@ contract EtherStellarCoin is ERC20, ERC20Burnable, Pausable, AccessControl, Owna
 
     function _nonReentrantBefore() private {
         // Prevent reentrancy
-        require(!_locked, "No reentrancy");
+        require(!_locked, "ReentrancyGuard: reentrant call");
         _locked = true;
+    }
+
+    function _nonReentrantAfter() private {
+        // Reset the reentrancy flag
+        _locked = false;
     }
 
     function _nonReentrantAfter() private {
