@@ -2051,7 +2051,7 @@ abstract contract Pausable is Context {
 
 
 
-// File: @openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol
+// File: @openzeppelin-contracts/contracts/security/ReentrancyGuard.sol
 // SPDX-License-Identifier: MIT
 
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/ReentrancyGuard.sol)
@@ -2184,17 +2184,30 @@ library SafeMath {
     }
 }
 
-contract EtherStellar Coin is ERC20, ERC20Burnable, Pausable, Ownable {
+contract EtherStellarCoin is ERC20, ERC20Burnable, Pausable, AccessControl, Ownable, ReentrancyGuard {
     using SafeMath for uint256;
 
     uint256 private constant INITIAL_SUPPLY = 72000000000 * 10 ** 18;
 
     bool private _locked;
 
-    modifier noReentrancy() {
+    modifier nonReentrant() {
+        // This is a security mechanism to prevent reentrancy attacks.
+        // Calling _nonReentrantBefore protects the following function from reentrancy.
+        // When the function finishes, it calls _nonReentrantAfter to reset the reentrancy flag.
+        _nonReentrantBefore();
+        _;
+        _nonReentrantAfter();
+    }
+
+    function _nonReentrantBefore() private {
+        // Prevent reentrancy
         require(!_locked, "No reentrancy");
         _locked = true;
-        _;
+    }
+
+    function _nonReentrantAfter() private {
+        // Reset the reentrancy flag
         _locked = false;
     }
 
