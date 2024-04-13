@@ -1668,17 +1668,38 @@ abstract contract Pausable is Context {
 pragma solidity ^0.8.22;
 
 contract EtherStellar Coin is ERC20, ERC20Burnable, Pausable, Ownable {
-    uint256 private constant INITIAL_SUPPLY = 72000000000 * 10**18;
+    using SafeMath for uint256;
+
+    uint256 private constant INITIAL_SUPPLY = 72000000000 * 10 ** 18;
+
+    bool private _locked;
+
+    modifier noReentrancy() {
+        require(!_locked, "No reentrancy");
+        _locked = true;
+        _;
+        _locked = false;
+    }
 
     constructor() ERC20("EtherStellar Coin", "STELLAR") {
         _mint(msg.sender, INITIAL_SUPPLY);
     }
 
-    function distributeTokens(address distributionWallet) external onlyOwner {
-        uint256 supply = balanceOf(msg.sender);
-        require(supply == INITIAL_SUPPLY, "Tokens already distributed");
+    function distributeTokens(address distributionWallet) external onlyOwner noReentrancy {
+        require(balanceOf(address(this)) == INITIAL_SUPPLY, "Tokens already distributed");
+        _transfer(_msgSender(), distributionWallet, INITIAL_SUPPLY);
+    }
 
-        _transfer(msg.sender, distributionWallet, supply);
+    function pauseContract() public onlyOwner {
+        _pause();
+    }
+
+    function unpauseContract() public onlyOwner {
+        _unpause();
+    }
+
+    function burnTokens(uint256 amount) public onlyOwner {
+        _burn(_msgSender(), amount);
     }
 }
 
