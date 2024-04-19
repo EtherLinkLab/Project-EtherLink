@@ -1,5 +1,5 @@
 // File: @openzeppelin-contracts/contracts/utils/Context.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
 
@@ -29,7 +29,7 @@ abstract contract Context {
 
 
 // File: @openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts (last updated v5.0.0) (proxy/beacon/IBeacon.sol)
 
@@ -51,7 +51,6 @@ interface IBeacon {
 
 
 // File: @openzeppelin-contracts/contracts/proxy/Proxy.sol
-// SPDX-License-Identifier: MIT
 
 
 pragma solidity ^0.8.22;
@@ -623,7 +622,6 @@ library StorageSlot {
 
 
 // File: @openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol
-// SPDX-License-Identifier: MIT
 
 // OpenZeppelin Contracts (last updated v5.0.0) (proxy/ERC1967/ERC1967Proxy.sol)
 
@@ -649,7 +647,7 @@ contract ERC1967Proxy is Proxy {
      * - If `data` is empty, `msg.value` must be zero.
      */
     constructor(address implementation, bytes memory _data) payable {
-        ERC1967Utils.upgradeToAndCall(implementation, _data);
+        ERC1967Proxy.upgradeToAndCall(implementation, _data);
     }
 
     /**
@@ -657,17 +655,16 @@ contract ERC1967Proxy is Proxy {
      *
      * TIP: To get this value clients can read directly from the storage slot shown below (specified by ERC-1967) using
      * the https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call.
-     * `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
+     * `0x252fd9C54323240Cc1129beD11a1fE891fEb9be6`
      */
     function _implementation() internal view virtual override returns (address) {
-        return ERC1967Utils.getImplementation();
+        return ERC1967Proxy.getImplementation();
     }
 }
 
 
 
 // File: @openzeppelin-contracts/contracts/proxy/beacon/BeaconProxy.sol
-// SPDX-License-Identifier: MIT
 
 // OpenZeppelin Contracts (last updated v5.0.0) (proxy/beacon/BeaconProxy.sol)
 
@@ -705,7 +702,7 @@ contract BeaconProxy is Proxy {
      * - If `data` is empty, `msg.value` must be zero.
      */
     constructor(address beacon, bytes memory data) payable {
-        ERC1967Utils.upgradeBeaconToAndCall(beacon, data);
+        BeaconProxy.upgradeBeaconToAndCall(beacon, data);
         _beacon = beacon;
     }
 
@@ -808,181 +805,8 @@ contract UpgradeableProxy is Proxy {
 
 
 
-// File: @openzeppelin-solidity/contracts/proxy/TransparentUpgradeableProxy.sol
-// SPDX-License-Identifier: MIT
-
-
-pragma solidity ^0.8.22;
-
-
-/**
- * @dev This contract implements a proxy that is upgradeable by an admin.
- * 
- * To avoid https://medium.com/nomic-labs-blog/malicious-backdoors-in-ethereum-proxies-62629adf3357[proxy selector
- * clashing], which can potentially be used in an attack, this contract uses the
- * https://blog.openzeppelin.com/the-transparent-proxy-pattern/[transparent proxy pattern]. This pattern implies two
- * things that go hand in hand:
- * 
- * 1. If any account other than the admin calls the proxy, the call will be forwarded to the implementation, even if
- * that call matches one of the admin functions exposed by the proxy itself.
- * 2. If the admin calls the proxy, it can access the admin functions, but its calls will never be forwarded to the
- * implementation. If the admin tries to call a function on the implementation it will fail with an error that says
- * "admin cannot fallback to proxy target".
- * 
- * These properties mean that the admin account can only be used for admin actions like upgrading the proxy or changing
- * the admin, so it's best if it's a dedicated account that is not used for anything else. This will avoid headaches due
- * to sudden errors when trying to call a function from the proxy implementation.
- * 
- * Our recommendation is for the dedicated account to be an instance of the {ProxyAdmin} contract. If set up this way,
- * you should think of the `ProxyAdmin` instance as the real administrative inerface of your proxy.
- */
-contract TransparentUpgradeableProxy is UpgradeableProxy {
-    /**
-     * @dev Initializes an upgradeable proxy managed by `_admin`, backed by the implementation at `_logic`, and
-     * optionally initialized with `_data` as explained in {UpgradeableProxy-constructor}.
-     */
-    constructor(address _logic, address _admin, bytes memory _data) public payable UpgradeableProxy(_logic, _data) {
-        assert(_ADMIN_SLOT == bytes32(uint256(keccak256("eip1967.proxy.admin")) - 1));
-        _setAdmin(_admin);
-    }
-
-    /**
-     * @dev Emitted when the admin account has changed.
-     */
-    event AdminChanged(address previousAdmin, address newAdmin);
-
-    /**
-     * @dev Storage slot with the admin of the contract.
-     * This is the keccak-256 hash of "eip1967.proxy.admin" subtracted by 1, and is
-     * validated in the constructor.
-     */
-    bytes32 private constant _ADMIN_SLOT = 0x252fd9C54323240Cc1129beD11a1fE891fEb9be6;
-
-    /**
-     * @dev Modifier used internally that will delegate the call to the implementation unless the sender is the admin.
-     */
-    modifier ifAdmin() {
-        if (msg.sender == _admin()) {
-            _;
-        } else {
-            _fallback();
-        }
-    }
-
-    /**
-     * @dev Returns the current admin.
-     * 
-     * NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyAdmin}.
-     * 
-     * TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the
-     * https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call.
-     * `0x252fd9C54323240Cc1129beD11a1fE891fEb9be6`
-     */
-    function admin() external ifAdmin returns (address) {
-        return _admin();
-    }
-
-    /**
-     * @dev Returns the current implementation.
-     * 
-     * NOTE: Only the admin can call this function. See {ProxyAdmin-getProxyImplementation}.
-     * 
-     * TIP: To get this value clients can read directly from the storage slot shown below (specified by EIP1967) using the
-     * https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call.
-     * `0xB8258711507Deb527F8E46c09EC443F9E162D906`
-     */
-    function implementation() external ifAdmin returns (address) {
-        return _implementation();
-    }
-
-    /**
-     * @dev Changes the admin of the proxy.
-     * 
-     * Emits an {AdminChanged} event.
-     * 
-     * NOTE: Only the admin can call this function. See {ProxyAdmin-changeProxyAdmin}.
-     */
-    function changeAdmin(address newAdmin) external ifAdmin {
-        require(newAdmin != address(0), "TransparentUpgradeableProxy: new admin is the zero address");
-        emit AdminChanged(_admin(), newAdmin);
-        _setAdmin(newAdmin);
-    }
-
-    /**
-     * @dev Upgrade the implementation of the proxy.
-     * 
-     * NOTE: Only the admin can call this function. See {ProxyAdmin-upgrade}.
-     */
-    function upgradeTo(address newImplementation) external ifAdmin {
-        _upgradeTo(newImplementation);
-    }
-
-    /**
-     * @dev Upgrade the implementation of the proxy, and then call a function from the new implementation as specified
-     * by `data`, which should be an encoded function call. This is useful to initialize new storage variables in the
-     * proxied contract.
-     * 
-     * NOTE: Only the admin can call this function. See {ProxyAdmin-upgradeAndCall}.
-     */
-    function upgradeToAndCall(address newImplementation, bytes calldata data) external payable ifAdmin {
-        _upgradeTo(newImplementation);
-        // solhint-disable-next-line avoid-low-level-calls
-        (bool success,) = newImplementation.delegatecall(data);
-        require(success);
-    }
-
-    /**
-     * @dev Returns the current admin.
-     */
-    function _admin() internal view returns (address adm) {
-        bytes32 slot = _ADMIN_SLOT;
-        // solhint-disable-next-line no-inline-assembly
-        assembly {
-            adm := sload(slot)
-        }
-    }
-
-    /**
-     * @dev Stores a new address in the EIP1967 admin slot.
-     */
-    function _setAdmin(address newAdmin) private {
-        bytes32 slot = _ADMIN_SLOT;
-
-        // solhint-disable-next-line no-inline-assembly
-        assembly {
-            sstore(slot, newAdmin)
-        }
-    }
-
-    /**
-     * @dev Makes sure the admin cannot access the fallback function. See {Proxy-_beforeFallback}.
-     */
-    function _beforeFallback() internal override virtual {
-        require(msg.sender != _admin(), "TransparentUpgradeableProxy: admin cannot fallback to proxy target");
-        super._beforeFallback();
-    }
-}
-
-
-
-// File: @contracts/ERC20UpgradeableProxy.sol
-// SPDX-License-Identifier: MIT
-
-
-pragma solidity ^0.8.22;
-
-
-contract ERC20UpgradeableProxy is TransparentUpgradeableProxy {
-
-    constructor(address logic, address admin, bytes memory data) TransparentUpgradeableProxy(logic, admin, data) public {
-
-    }
-}
-
-
-
 // File: @openzeppelin-contracts/contracts/access/Ownable.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts (last updated v4.7.0) (access/Ownable.sol)
 
@@ -1070,7 +894,7 @@ abstract contract Ownable is Context {
 
 
 // File: @openzeppelin-contracts/contracts/access/IAccessControl.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts (last updated v5.0.0) (access/IAccessControl.sol)
 
@@ -1174,39 +998,8 @@ interface IAccessControl {
 
 
 
-// File: @openzeppelin-contracts/contracts/utils/introspection/IERC165.sol
-// SPDX-License-Identifier: MIT
-
-// OpenZeppelin Contracts (last updated v5.0.0) (utils/introspection/IERC165.sol)
-
-
-pragma solidity ^0.8.22;
-
-
-/**
- * @dev Interface of the ERC-165 standard, as defined in the
- * https://eips.ethereum.org/EIPS/eip-165[ERC].
- *
- * Implementers can declare support of contract interfaces, which can then be
- * queried by others ({ERC165Checker}).
- *
- * For an implementation, see {ERC165}.
- */
-interface IERC165 {
-    /**
-     * @dev Returns true if this contract implements the interface defined by
-     * `interfaceId`. See the corresponding
-     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[ERC section]
-     * to learn more about how these ids are created.
-     *
-     * This function call must use less than 30 000 gas.
-     */
-    function supportsInterface(bytes4 interfaceId) external view returns (bool);
-}
-
-
 // File: @openzeppelin-contracts/contracts/utils/introspection/ERC165.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/introspection/ERC165.sol)
 
@@ -1238,7 +1031,7 @@ abstract contract ERC165 is IERC165 {
 
 
 // File: @openzeppelin-contracts/contracts/access/AccessControl.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts (last updated v5.0.0) (access/AccessControl.sol)
 
@@ -1450,7 +1243,7 @@ abstract contract AccessControl is Context, IAccessControl, ERC165 {
 
 
 // File: @openzeppelin/contracts/token/ERC20/IERC20.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts (last updated v4.6.0) (token/ERC20/IERC20.sol)
 
@@ -1538,7 +1331,7 @@ interface IERC20 {
 
 
 // File: @openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)
 
@@ -1571,7 +1364,7 @@ interface IERC20Metadata is IERC20 {
 
 
 // File: @openzeppelin-contracts/contracts/token/ERC20/ERC20.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/ERC20.sol)
 
@@ -1885,7 +1678,7 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
 
 
 // File: @openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Burnable.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts (last updated v4.5.0) (token/ERC20/extensions/ERC20Burnable.sol)
 
@@ -1928,7 +1721,7 @@ abstract contract ERC20Burnable is Context, ERC20 {
 
 
 // File: @openzeppelin/contracts/utils/Pausable.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/Pausable.sol)
 
@@ -2052,7 +1845,7 @@ abstract contract Pausable is Context {
 
 
 // File: @openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol
-// SPDX-License-Identifier: MIT
+
 
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/ReentrancyGuard.sol)
 
